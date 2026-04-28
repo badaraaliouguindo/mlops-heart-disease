@@ -73,7 +73,7 @@ mlops-heart-disease/
 
 ---
 
-## 🚀 Run Locally
+##  Run Locally
 
 ```bash
 # Clone
@@ -97,7 +97,7 @@ uvicorn api.main:app --reload  # Open http://localhost:8000/docs
 
 ---
 
-## 🐳 Run with Docker
+##  Run with Docker
 
 ```bash
 docker build -t heart-disease-api .
@@ -106,7 +106,7 @@ docker run -p 8000:8000 heart-disease-api
 
 ---
 
-## 🔌 API Endpoints
+##  API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
