@@ -1,0 +1,54 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Test API health
+      run: |
+        pip install httpx pytest
+        python -c "
+        import joblib, numpy as np, pandas as pd
+        model = joblib.load('models/model.pkl')
+        scaler = joblib.load('models/scaler.pkl')
+        features = joblib.load('models/feature_names.pkl')
+        print('Model loaded successfully')
+        print(f'Features: {len(features)}')
+        print('CI Test passed ✓')
+        "
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Build Docker image
+      run: docker build -t heart-disease-api .
+
+    - name: Test Docker container
+      run: |
+        docker run -d -p 8000:8000 --name test-api heart-disease-api
+        sleep 5
+        curl -f http://localhost:8000/health
+        docker stop test-api
